@@ -81,13 +81,14 @@ DATABASES = {
     }
 }
 
+# Environment variables for Production
 DB_USERNAME = os.environ.get("POSTGRES_USER")
 DB_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 DB_DATABASE_NAME = os.environ.get("POSTGRES_DB")
 DB_HOST = os.environ.get("POSTGRES_HOST")
 DB_PORT = os.environ.get("POSTGRES_PORT")
 
-# to make sure all are set
+# to make sure all are set. returns True if all available
 DB_IS_AVAIL = all([
     DB_USERNAME,
     DB_PASSWORD,
@@ -97,6 +98,21 @@ DB_IS_AVAIL = all([
 ])
 
 POSTGRES_READY = str(os.environ.get("POSTGRES_READY")) == '1'
+
+# DB config when everything is ok use our variables and custom DB(postgresql)
+if DB_IS_AVAIL and POSTGRES_READY:
+    DATABASES = {
+        "default" : {
+            "ENGINE" : "django.db.backends.postgresql",
+            "NAME" : DB_DATABASE_NAME,
+            "USER" : DB_USERNAME,
+            "PASSWORD" : DB_PASSWORD,
+            "HOST": DB_HOST,
+            "PORT" : DB_PORT,
+        }
+    }
+
+print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
